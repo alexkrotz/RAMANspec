@@ -74,7 +74,7 @@ def get_scan():
             #print(full_spec)
             scan_finished = time.perf_counter()
             x = range(0,len(full_spec))
-            print(str(len(full_spec))+' data points received after '+str(scan_finished-scan_start)+' seconds')
+            #print(str(len(full_spec))+' data points received after '+str(scan_finished-scan_start)+' seconds')
             #plt.plot(x,full_spec)
             #plt.draw()
             #plt.pause(0.0001)
@@ -91,6 +91,7 @@ proc_spec=[]
 plt.ion()
 scale_var=0
 plt_var=0
+autoscan_var=0
 x=range(0,len(proc_spec))
 #plt.legend(bbox_to_anchor=(1.05,1),loc=2, borderaxespad=0.)
 bkg_plotvar = 0
@@ -109,20 +110,13 @@ while True:
     if cmd_input == 'exp':
         exp_scan = get_scan()
     if cmd_input == 'autoscan':
-       # if integration_time!=b'I1\r\n':
-       #     print('setting Integration time to 10')
-       #     integration_time=b'I10\r\n'
-       #     ser.write(integration_time)
-       #     time.sleep(1)
-       #     ser.flush()
-       # else:
-       #     integration_time=integration_time_original
-        print('acquiring drk')
-        drk_scan = get_scan()
-        print('acquiring bkg')
-        bkg_scan = get_scan()
-        print('acquiring exp')
+        if autoscan_var==0:
+            autoscan_var=1
+        else:
+            autoscan_var=0
+    if autoscan_var==1:
         exp_scan = get_scan()
+        print('scan acquired')
     if cmd_input == 'drk_scale':
         drk_scale = float(input('Enter scaling for dark scan: '))
     if cmd_input == 'bkg_scale':
@@ -134,6 +128,8 @@ while True:
             scale_var=1
         else:
             scale_var=0
+    if cmd_input[0] =='r':
+
     #if cmd_input == 'plt':
     if len(drk_scan)>0 and len(bkg_scan)>0 and len(exp_scan)>0:
         min_length = min([len(drk_scan),len(bkg_scan),len(exp_scan)])
